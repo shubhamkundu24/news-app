@@ -1,0 +1,333 @@
+News App (React) text file 
+
+react
+jsx
+bootstrap
+tailwind CSS
+News API Integration
+
+
+
+Vite bundler ka use krke ek react app ka nyaa folder bnaa lenge, usme se default cheeje htaa denge
+
+- Now will go to the bootstrap 
+
+Bootstrap use krne se phle hume CDN download krna padega
+
+Go to Documentation, go to introduction, 
+
+    Get started by including Bootstrap’s production-ready CSS and JavaScript via CDN without the need for any build steps
+
+
+    Include Bootstrap’s CSS and JS. Place the <link> tag in the <head> for our CSS, and the <script> tag for our JavaScript bundle (including Popper for positioning dropdowns, popovers, and tooltips) before the closing </body>
+
+CDN - Content Delivery Network
+
+To CDN ka use krke hum Bootstrap ki ready made CSS anfd JS components and fucntionalities use kr skte hai 
+
+Bootstrap se link tag and script tag uthaao and paste them in head and body(just before the closing body tag) tag of our file
+
+Hmaara script tag bhi likhaa hoga vhaa pe, uske neeche paste krdo iss script tag ko
+
+Bootstrap se hme HTML, CSS & JS language me components milenge, but we have to modify them acc to JSX file in App.jsx file
+
+
+Buttons, Drop Down, Spinners, etc....components r available there
+
+
+rafce - boiler template, like the below code :- 
+
+import React from 'react'
+
+const App = () => {
+  return (
+    <div>
+      
+    </div>
+  )
+}
+
+export default App
+
+
+Our Project :- A News App which will take the latest News from the openAI API and displays it in our application
+
+
+To src folder k andar Components folder bnaa lenge, and usme 3 components Navbar, NewsBoard, NewsItem.jsx bnaa lenge (.jsx files)
+
+write rafce in each of them....the tutor is removing import react from  'react' line.....(but if it is written there, then also no issues)
+
+- To sabse phle we will take one NavBar from Bootstrap, paste it into Navbar file, replace class with className and only open tags like <br>, <hr>, etc... with <br/>, <hr/>, etc...
+
+
+ctrl + h = replace (select replace all)
+ctrl + f = find
+
+Navbar me content daalne k baad, ab hme apne Navbar component ko App.jsx file me mount krna padega - 
+
+- import Navbar from './components/Navbar'
+
+and write a self closing Navbar tag in return statement
+
+return (
+    <div>
+        <Navbar/>
+    </div>
+)
+
+
+Agr Dark Navbar chahiye, ya kisi or colour me, then it is also available on Bootstrap, just paste data-bs-theme="dark" after className attribute in <nav> opening tag for Dark Navbar
+
+- Now we will create an API Key from the News API and we will store it in environment variable
+
+- Go to "newsapi.org" in a browser, vhaa jaake clickkro - Get API Key, We have to register there....and the API Key will be generated....copy it and paste it in .env file
+
+(VITE_API_KEY = c78dbfaf1b1941e6a97fa404ea8aec91)
+
+- Now we will use this API Key in NewsBoard.jsx file to fetch the news
+
+
+Agr kisi tag me (className = "badge bg-light text-dark" ) likha hua hai className k andar, then that text will get a small filled rectangle in background (Ye hmne Navbar ke andar Logo ko thodi styling dene k liye kiya hai)
+
+Now, go to the News API Documentation, go to Top Headlines, vhaa pe ek url de rkha hoga...
+
+
+GET https://newsapi.org/v2/top-headlines?country=us&apiKey=qwertdfcgvhb6fdvhc6v
+
+- Copy this url, change country name - for India we will use in, country=in
+
+- isme hum alg alg specific categories bhi daal skte hai, and we can also add sources of the news, specific keywords to search for...etc
+
+The sample response will be - 
+
+{
+"status": "ok",
+"totalResults": 37,
+-"articles": [
+-{
+-"source": {
+"id": "cnn",
+"name": "CNN"
+},
+"author": "Rob Picheta",
+"title": "Britain’s plan to transfer Chagos Islands blocked by last-minute legal injunction - CNN",
+"description": "Britain’s government has been temporarily blocked from concluding its deal to transfer the Chagos Islands to Mauritius, PA Media reported, after an 11th-hour injunction by a High Court judge.",
+"url": "https://www.cnn.com/2025/05/22/uk/britain-chagos-islands-transfer-block-intl",
+"urlToImage": "https://media.cnn.com/api/v1/images/stellar/prod/2000-07-18t000000z-1200715962-rp2drhzexiaa-rtrmadp-3-britain-islanders.JPG?c=16x9&q=w_800,c_fill",
+"publishedAt": "2025-05-22T07:27:00Z",
+"content": "Britains government has been temporarily blocked from concluding its deal to transfer the Chagos Islands to Mauritius, PA Media reported, after an 11th-hour injunction by a High Court judge.\r\nPrime M… [+1517 chars]"
+},{},{}........and so on
+]
+}
+
+
+- To is response me ek articles key hai, jo sabhi articles ka data contain krti hai
+(author, title, description, url, image url,content, etc....) 
+
+
+- To uss GET vale url ko copy krlo and go to our NewsBoard file.....usme ek useState variable bnaa lo...above the return statement (useState Hook)
+
+const [articles,setArticles] = usestate([])
+
+- articles ho jaaega variable ka naam and function ka naam hojaaega setArticles...and we will initialize this variable with empty array
+
+
+- Iske baad ek useEffect Hook use krenge, is useEffect me hum ek Arrow Fxn pass kar denge, us fxn k andar *url* naam ka ek bvariable bnaa lenge, paste the GET url copied from the newsapi platform inside backticks `https://newsapi.org/v2/top-headlines?country=us&apiKey=c78dbfaf1b1941e6a97fa404ea8aec91`
+
+- Iss url me us ki jagah in daal denge and apikey= ke aage hmaari api key vala variable ka naam daalenge jo .env file me stored hai
+
+
+useEffect(()=>{
+    let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=${import.meta.env.VITE_API_KEY}`
+},[])
+
+- mujhe import krna hai, meta data, .env file se, VITE_API_KEY naam ka variable....
+
+- ek baar iss url ko hmne construct kr liya, now we will fetch this url (or basically fetch the data from this url)
+
+- Just below the declaration of url variable, we will use the fetch() fxn to fetch the API or fetch the data from API
+
+- fetch(url).then(response=>response.json().then(data=>setArticles(data.articles)))
+
+(Here after using then we will be having a promise, jisko hum response ka naam de denge, ab iss response ko hum json method k saath pass krdenge, after that we will get a promise, jisko hum data ka naam de rhe hai....This is gonna be the actual data that we will be getting, so in this data we have articles array, so will set that array to our articles variable)
+
+- So, after this, we will get the data in our articles state (or articles variable)
+
+- To jab bhi hmaara NewsBoard component load hoga, tab hum chahte hai ki ye data fetch ho jaae
+
+- Use effect k arrow fxn k baad, comma and khaali array bhi likh denge
+
+- Ab data hmaare articles variable me aa gya hai, now we just have to display the data, using the NewsItem Component
+
+- NewsItem component k liye hum Bootstrap se Card utha lenge
+
+- Ek card me image, Title, content, button hoga....So just paste the Card code in NewsItem,jsx return statement (We will close the img tag and replace class with className); Anchor tag me se # ko htaa k / use kr lenge
+
+- Ab hum apne NewsBoard.jsx me jaake we will map the articles array using the NewsItem component (map is a method, used to iterate in an array)
+
+- Inside the map method, we will pass the arrow fxn, and in that arrow fxn, we will pass the parameteres (individual news and index number)
+
+// individual news ko hum news naam k iterato se represent kr rhe hai, which will represent individual news, and har news ki properties ko hum dot(.) lgaa k access kr skte hai
+
+and inside the arrow fxn, we will return <NewsItem/> component, and in this NewsItem component, we will use key={index} as a prop
+
+- So for a news we have to pass the details like title, description, urlToImage, url of the article, etc....using props
+
+- Now, we will use these props in our NewsItem component
+
+
+props ka use krke data Parent se child k paas bheja jaata hai, the parent will send data and the child will receive data using props...
+
+- First in the NewsItem file, we will destructure the props
+
+(2 methods to receive data....phla hai ki NewsItem = (props) likh do, and props.property krke properties koaccess krlo || or seedha props ki jagah pe {prop1, prop2, etc....} krke saare props list down krdo)
+
+- Here, we r going with the 2nd method
+
+{title} , {src}, etc use krunga jhaa bhi data ki requirement hai
+
+- Ek baar functionality ache se kaam kr jaae, fir hum styling bhi kar lenge
+
+- Height, width, margin, padding set krke cards ko uniform bnaaenge
+
+- Also, in the title we will use .slice(0,50) method
+
+- In the description p tag, from the API Call, sometimes we might not get the description for the article; To phle hum check krenge ki agr article me kuch content hai to hi slice krenge, else we will add soem cistom description to it.....We can use ternary opearator(similar to if-else)
+
+{Sometimes, we also might not get the images or any other data element may be missed}
+
+{It's giving only 19 news, Can't I get unlimited news ?}
+
+- We can also show the category wise news - business, entertainment, general, health, science, sports, technology, etc...We wnt to change categories from Navbar menu
+
+For that we have to mention the category in the url while calling the API (We are gonna use the Navbar to switch between the categories)
+
+- In App.jsx file, we will create a useState variable named category and the fxn with name setCategory, and initialise the category variable with "general" category
+
+const [category, setCategory] = useState("general")
+
+- Fir hum apne <Navbar/> me setCategory={setCategory} and <NewsBoard/> me category={category} as props pass kr denge
+
+- Now, in the NewsBoard component, we will destructure the props {category} likh denge jhaa props receive krte the
+
+- ab url k andar, before the apikey, category ka bhi segment add kr denge
+
+"url......&category=${category}&apikey=......." is trh se kuch iss category ko API call ke url me merge kr denge
+
+- Now, we will go to the Navbar.jsx and 5 li tags bnaa lenge.....ek Technology, Business, Health, Sports,Entertainment
+
+<li className="nav-item">
+<div className="nav-link" 
+onClick={()=>setCategory("health")}>Health
+</div>
+</li>
+iss trh se li tag k andar ke anchor tag ko div se replace kr denge
+
+- An hum Navbar ke andar apne props ko destructure kr denge....will write {setCategory} instead of props in the main arrow fxn as a parameter
+
+- Har ek li tag k andar jo div hai, usme onClick fxn lgaa denge to call the setCategory() fxn and will also pass a category named in lowerCase letters like "science" or "technology", etc 
+
+- Now, go to NewsBoard, we want ki jab bhi category update ho hmaara useEffect fxn chal jaae, uske liye useEffect k end me jo khaali array rkhi thi phle, usme ab category variable paas kr denge
+
+- Ab navigation bar ki cheeje pe click krke hum alg alg categories ki news API se call kr skte hai
+
+- One issue - Yhaa images load nhi ho rhi kuch, so we will use a default image wherever the image is not loading....just like we did when we didn't got description for some news
+
+- Ek image uthaaoapne PC se, use assets folder me daal do....then usko import krlo in NewsItem file, and img tag me likho....ki 
+if(src){
+  then load src
+}
+else{
+  load default image
+}
+- We will use the ternary opeartor instead of the if else thing
+
+<img src={src?src:Image} style={{height:"200px", width:"327.5px"}} className="card-img-top" alt="..."/>
+
+- So, now the project is successfully completed, and we can also go to the Read More button to read the full article
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# More improvenments
+- I want Indian news instead of US // Not done
+
+- on hover on nav elements -> pointer : cursor // Done
+
+- Jis bhi card me image ya description ya data kuch bhi missing hai, usko show hi mat kro na bhai, load something new  // Not done
+
+- And can't I get more data, like 100 at a time....or a load more option for the end user ....so that the user gets a never ending news factory // Not done
+
+- Also, I have a search bar in the top right corner, I want it to work correctly......
+- Search button ki styling change kro, its not looking good // Not done
+
+
+
+
+
+
+
+
+Deployment of Vite React project :- on GitHub pages
+
+Sbse phle, apne GitHub pe ek repository bnaao
+
+- Then go to vite.config.js file and add the url path name for our website as base, ye vohi slug haijisnaam se hmaari website GitHub pages pe show hogi at a public url
+
+base: "/repository-name"
+
+
+
+- Then go to the package.json file, 
+
+Add "homepage": "https://shubhamkundu24.github.io/news-app/", just after the name of the project
+
+- Now, in terminal we will install the GitHub pages package - npm install gh-pages --save-dev
+
+- Then add 2 scripts in package.json file, 
+
+"predeploy": "npm run build",
+"deploy": "gh-pages -d dist"
+
+
+dist => It is the folder where our build will exist (in Vite applications, the build folder's name is replaced by dist folder)
+
+
+
+
+
+🗂 2. Rename dist to docs
+GitHub Pages tabhi serve karta hai jab:
+
+docs/ folder ho repo ke root me
+
+OR tum set karo kisi custom branch ko (jaise gh-pages)
+
+
+
+
+
+
+
+
+
+
+
+
+
+

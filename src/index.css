@@ -1,0 +1,10 @@
+.nav-link {
+  cursor: pointer;
+  color: #CCCCCC !important;
+  font-size: 17px !important;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #008080 !important;
+}
